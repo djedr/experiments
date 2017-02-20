@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8" />
+<canvas id="c" width="1080" height="480"></canvas>
+
+<script>
+    const ctx = document.getElementById('c').getContext('2d');
+    let circle = {
+        x: 100,
+        y: 100,
+        r: 20
+    };
+
+
+    window.addEventListener('load', () => {
+        function movePoint2(point, offset) {
+
+            point.x = circle.x + circle.r * Math.sin(point.angle);
+            point.y = circle.y + circle.r * Math.cos(point.angle);
+            point.angle += (0.0025) * Math.PI;
+
+            point.x += wave.amplitude * Math.sin(wave.value - offset);
+            point.y += wave.amplitude * Math.cos(wave.value - offset);
+        }
+
+        function sinPoint(point, offset, { originX = 100, originY = 100, width = 20, height = 20, density = 0.0025, f = Math.sin }) {
+            point.x = width * point.angle + originX;// (circle.x + circle.r * Math.sin(a));//100;
+            point.y = height * f(point.angle + offset) + originY; //(circle.y + circle.r * Math.cos(a));
+            point.angle += density * Math.PI;
+
+            //let x = (circle.x + circle.r * Math.sin(point.y));
+            //let y = (circle.y + circle.r * Math.cos(point.y));
+            //point.x = x;
+            //point.y = y;
+        }
+
+        let points = Array(4).fill({ x: 100, y: 100, angle: 0 });
+
+        let i = 0;
+        let an = 0;
+        function draw() {
+            requestAnimationFrame(draw);
+
+            let off = 0;
+            let offoff = Math.PI * (1 / points.length * 2);
+
+            an += Math.PI * 0.001;
+
+            ctx.save();
+            ctx.translate(circle.x, circle.y)
+            ctx.rotate(an);
+
+            for (let point of points) {
+                sinPoint(point, off, {
+                    width: 40,
+                    height: 40,
+                    //originX: (circle.x + circle.r * Math.sin(an)),
+                    //originY: (circle.y + circle.r * Math.cos(an)),
+                    density: 0.0025
+                });
+                off += offoff;
+                //ctx.fillRect(point.x, point.y, 1, 1);
+                ctx.fillRect(point.x, point.y, 1, 1);
+                i+= 0.1 * Math.PI;
+            }
+
+            ctx.restore();
+        }
+
+        requestAnimationFrame(draw);
+    });
+</script>

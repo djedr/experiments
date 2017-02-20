@@ -1,0 +1,31 @@
+// @ifDefined(@macro, `
+js code
+js code
+js code
+// `, else@m2, `
+
+// `)
+
+@if (macro) {
+    js code
+    js code
+    js code
+} else if (macro2) {
+    ...
+}
+
+text function ...
+macro function
+
+identifiers mean macro names
+text is text
+
+so you can pass macros to macros
+
+@macro? @(
+    code
+): m2? @(
+    code2
+): @(
+    code3
+)

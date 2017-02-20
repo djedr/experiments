@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8" />
+
+<input id="autocomplete" type="text" />
+<ul class="results"></ul>
+
+<script src="fun1.js"></script>
+<script>
+window.addEventListener('load', () => {
+	let input = document.querySelector('#autocomplete');
+	let list = document.querySelector('.results');
+
+	fun({body: c=> [
+		_ => input.addEventListener('keyup', c.next),
+        //_.debounce(e => c.next(e)),
+		fun.debounce(c, 300),
+		e => c.next(e.target.value),
+		text => apiUser(text).then(c.next),
+		response => response.json().then(c.next),
+		data => c.next(data.items || (data.message? [{message: data.message}]: [])),
+		displayAutocompletes
+	]})();
+
+	function displayAutocompletes(items) {
+		list.innerHTML = '';
+
+		let fragment = document.createDocumentFragment();
+
+		items.forEach((item) => {
+			let li = document.createElement('li');
+			if (item.login) li.innerText = item.login;
+			else {
+				li.innerText = item.message;
+				li.style.color = 'red';
+			}
+
+			fragment.appendChild(li);
+		});
+
+		list.appendChild(fragment);
+	}
+
+	function apiUser(text) {
+	  return fetch('https://api.github.com/search/users?q='+text);
+	}
+});
+</script>
